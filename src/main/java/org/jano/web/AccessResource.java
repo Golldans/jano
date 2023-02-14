@@ -1,8 +1,10 @@
 package org.jano.web;
 
 import io.smallrye.reactive.messaging.annotations.Broadcast;
+import io.vertx.ext.web.RoutingContext;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
+import org.jano.domain.repositories.AccessLog;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -17,14 +19,18 @@ public class AccessResource {
     @Inject
     @Broadcast
     @Channel("access")
-    Emitter<String> accessEmitter;
+    Emitter<AccessLog> accessEmitter;
 
+    @Inject
+    RoutingContext context;
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String access() {
+        String ip = context.request().host();
+        AccessLog accessLog = new AccessLog(ip, "cristo" );
         System.out.println("Eae");
 
-        CompletionStage<Void> ack = accessEmitter.send("user cristo tried to log in");
+        CompletionStage<Void> ack = accessEmitter.send(accessLog);
 
         return "access denied";
     }
