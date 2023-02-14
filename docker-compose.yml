@@ -31,12 +31,15 @@ services:
       - 19200:9200
       - 9300:9300
   logstash:
-    image: logstash:8.4.1
-    ports:
-      - 12201:12201/udp
-      - 5044:5044
+    image: docker.elastic.co/logstash/logstash:7.6.2
+    #ports:
+    #  - 12201:12201/udp
+    #  - 5044:5044
     environment:
-      - "xpack.monitoring.elasticsearch.url=http://elasticsearch:9200"
+      - "xpack.monitoring.elasticsearch.url=http://localhost:9200"
+    network_mode: "host"
+   # volumes:
+    #  - ./config/logstash/pipeline/:/usr/share/logstash/pipeline/
   kibana:
     image: kibana:8.4.1
     ports:
